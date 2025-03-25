@@ -8,8 +8,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lutfudolay.dto.DtoCourse;
 import com.lutfudolay.dto.DtoStudent;
 import com.lutfudolay.dto.DtoStudentIU;
+import com.lutfudolay.entities.Course;
 import com.lutfudolay.entities.Student;
 import com.lutfudolay.repository.StudentRepository;
 import com.lutfudolay.services.IStudentService;
@@ -47,15 +49,26 @@ public class StudentServiceImpl implements IStudentService {
 
 	@Override
 	public DtoStudent getStudentById(Integer id) {
-		DtoStudent dto = new DtoStudent();
-		Optional<Student> optional = studentRepository.findById(id);
-		if (!optional.isPresent()) {
-			Student dbStudent = optional.get();
-
-			BeanUtils.copyProperties(dbStudent, dto);
+		
+		DtoStudent dtoStudent = new DtoStudent();
+		Optional<Student> optional=studentRepository.findById(id);
+		if(optional.isEmpty()) {
+			return null;
 		}
-
-		return dto;
+		
+		Student dbStudent = optional.get();
+		BeanUtils.copyProperties(dbStudent, dtoStudent);
+		
+		if(dbStudent.getCourses()!=null && !dbStudent.getCourses().isEmpty()) {
+			for (Course course: dbStudent.getCourses()) {
+				DtoCourse dtoCourse = new DtoCourse();
+				BeanUtils.copyProperties(course, dtoCourse);
+				
+				dtoStudent.getCourses().add(dtoCourse);
+			}
+		}
+		
+		return null;
 	}
 
 	@Override
