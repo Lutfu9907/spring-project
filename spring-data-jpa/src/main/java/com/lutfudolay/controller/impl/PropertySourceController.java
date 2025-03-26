@@ -26,6 +26,7 @@ public class PropertySourceController {
 	
 	@GetMapping(value = "/getServers")
 	public List<Server> getServers(){
+		System.out.println("key degerim" + globalProperties.getKey());
 		return globalProperties.getServers();
 	}
 }
